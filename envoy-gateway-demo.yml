@@ -95,7 +95,6 @@ spec:
   selector:
     matchLabels:
       app: gateway-demo
-      version: v2
   template:
     metadata:
       labels:
