@@ -65,14 +65,43 @@ kind: Deployment
 metadata:
   name: gateway-deployment
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: gateway-demo
+      version: v1
   template:
     metadata:
       labels:
         app: gateway-demo
+        version: v1
+    spec:
+      containers:
+        - name: gateway-container
+          image: jdhet/fastapi-argo:shaf86cfbdf7fadb0896809044b5c598ed8e79b409f
+          # image: docker.io/jdhet/fastapi-argo:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            requests: { cpu: "100m", memory: "128Mi" }        # Minimum CPU required (IMPORTANT for HPA)
+            limits: { cpu: "500m", memory: "512Mi" }
+---
+# canary deployment - 1 replica
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-deployment-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-demo
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: gateway-demo
+        version: v2
     spec:
       containers:
         - name: gateway-container
